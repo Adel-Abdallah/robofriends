@@ -1,44 +1,44 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import CardList from "../Components/CardList";
 // import { robots } from "./robots";
 import SearchBox from "../Components/SearchBox";
 import Scroll from "../Components/Scroll";
 import "./App.css";
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      robots: [],
-      searchfiled: "",
-    };
-  }
-  componentDidMount() {
+function App() {
+  const [robots, setRobots] = useState([]);
+  const [searchfield, setSearchfield] = useState("");
+  const [count, setCount] = useState(0); // for demo purposes
+
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then(response => response.json())
-      .then(users => this.setState({ robots: users }));
-  }
-  onSearchChange = e => {
-    e.preventDefault();
-    this.setState({ searchfiled: e.target.value });
+      .then(users => {
+        setRobots(users);
+      });
+    // console.log(count)
+  }, []); // if you add count, only run if count changes.
+
+  const onSearchChange = event => {
+    setSearchfield(event.target.value);
   };
-  render() {
-    const { robots, searchfiled } = this.state;
-    const filteredRobots = robots.filter(robot => {
-      return robot.name.toLowerCase().includes(searchfiled.toLowerCase());
-    });
-    return !robots.length ? (
-      <h1>loading</h1>
-    ) : (
+  const filteredRobots = robots.filter(robot => {
+    return robot.name.toLowerCase().includes(searchfield.toLowerCase());
+  });
+
+  return !robots.length ? (
+    <h1>Loading</h1>
+  ) : (
       <div className='tc'>
-        <h1>RoboFriends</h1>
-        <SearchBox searchChange={this.onSearchChange} />
+        <h1 className='f1'>RoboFriends</h1>
+        <button onClick={() => setCount(count + 1)}>Click Me!</button>
+        <SearchBox searchChange={onSearchChange} />
         <Scroll>
-          <CardList robots={filteredRobots} />;
+          <CardList robots={filteredRobots} />
         </Scroll>
       </div>
     );
-  }
 }
-
 export default App;
+
+
